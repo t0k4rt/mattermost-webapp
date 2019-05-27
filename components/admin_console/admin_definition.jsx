@@ -938,12 +938,14 @@ export default {
                     name_default: 'GitLab',
                     onConfigLoad: (config) => {
                         const newState = {};
-                        newState['GitLabSettings.Url'] = config.GitLabSettings.UserApiEndpoint.replace('/api/v4/user', '');
+                        //newState['GitLabSettings.Url'] = config.GitLabSettings.UserApiEndpoint.replace('/api/v4/user', '');
+                        let url = new URL(config.GitLabSettings.UserApiEndpoint);
+                        newState['GitLabSettings.Url'] = url.origin;
                         return newState;
                     },
                     onConfigSave: (config) => {
                         const newConfig = {...config};
-                        newConfig.GitLabSettings.UserApiEndpoint = config.GitLabSettings.Url.replace(/\/$/, '') + '/api/v4/user';
+                        //newConfig.GitLabSettings.UserApiEndpoint = config.GitLabSettings.Url.replace(/\/$/, '') + '/api/v4/user';
                         return newConfig;
                     },
                     settings: [
@@ -994,39 +996,27 @@ export default {
                             key: 'GitLabSettings.UserApiEndpoint',
                             label: t('admin.gitlab.userTitle'),
                             label_default: 'User API Endpoint:',
-                            dynamic_value: (value, config, state) => {
-                                if (state['GitLabSettings.Url']) {
-                                    return state['GitLabSettings.Url'].replace(/\/$/, '') + '/api/v4/user';
-                                }
-                                return '';
-                            },
-                            isDisabled: true,
+                            help_text_default: 'Enter Oauth2 user info endpoint',
+                            placeholder_default: 'E.g.: https://your.gitlab.com/api/v4/user',
+                            isDisabled: needsUtils.stateValueFalse('GitLabSettings.Enable'),
                         },
                         {
                             type: Constants.SettingsTypes.TYPE_TEXT,
                             key: 'GitLabSettings.AuthEndpoint',
                             label: t('admin.gitlab.authTitle'),
                             label_default: 'Auth Endpoint:',
-                            dynamic_value: (value, config, state) => {
-                                if (state['GitLabSettings.Url']) {
-                                    return state['GitLabSettings.Url'].replace(/\/$/, '') + '/oauth/authorize';
-                                }
-                                return '';
-                            },
-                            isDisabled: true,
+                            help_text_default: 'Enter Oauth2 authorize endpoint',
+                            placeholder_default: 'E.g.: https://your.gitlab.com/api/oauth/authorize',
+                            isDisabled: needsUtils.stateValueFalse('GitLabSettings.Enable'),
                         },
                         {
                             type: Constants.SettingsTypes.TYPE_TEXT,
                             key: 'GitLabSettings.TokenEndpoint',
                             label: t('admin.gitlab.tokenTitle'),
                             label_default: 'Token Endpoint:',
-                            dynamic_value: (value, config, state) => {
-                                if (state['GitLabSettings.Url']) {
-                                    return state['GitLabSettings.Url'].replace(/\/$/, '') + '/oauth/token';
-                                }
-                                return '';
-                            },
-                            isDisabled: true,
+                            help_text_default: 'Enter Oauth2 token endpoint',
+                            placeholder_default: 'E.g.: https://your.gitlab.com/api/oauth/token',
+                            isDisabled: needsUtils.stateValueFalse('GitLabSettings.Enable'),
                         },
                     ],
                 },
